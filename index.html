@@ -83,12 +83,22 @@ const textarea = document.getElementById('textarea');
 const sendBtn = document.getElementById('send-btn');
 const errorEl = document.getElementById('error');
 
+function linkify(text) {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(urlRegex, '<a href="$1" target="_blank" rel="noopener" style="color:#3D3A31;text-decoration:underline;text-underline-offset:3px;">$1</a>');
+}
+
 function addMessage(role, content) {
   const div = document.createElement('div');
   div.className = 'msg ' + role;
   const bubble = document.createElement('div');
   bubble.className = 'bubble';
-  bubble.textContent = content;
+  if (role === 'assistant') {
+    bubble.innerHTML = linkify(content).replace(/\n/g, '<br>');
+  } else {
+    bubble.textContent = content;
+  }
   div.appendChild(bubble);
   messagesEl.appendChild(div);
   messagesEl.scrollTop = messagesEl.scrollHeight;
